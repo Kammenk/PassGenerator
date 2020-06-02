@@ -15,7 +15,6 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -23,12 +22,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-
+    //Variable declaration
     String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     String nums = "0123456789";
     String symbols = "!@#$^&*=+()|?/\\;[]{}-.,";
@@ -41,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     Switch symbolCase;
     Switch numberCase;
     Switch darkMode;
-    boolean checked;
     SeekBar passLength;
     TextView passStrength;
     ConstraintLayout constraintLayout;
@@ -59,9 +56,11 @@ public class MainActivity extends AppCompatActivity {
     int maxPass;
 
     @SuppressLint("WrongConstant")
-    public void smh(){
+    //Method for switching from light to dark mode
+    public void switchDarkMode(){
         getDarkMode = sharedPreferences.getBoolean("darkModeEnabled",true);
         if(getDarkMode){
+            darkMode.setChecked(true);
             constraintLayout.setBackgroundColor(Color.BLACK);
             passText.setTextColor(Color.WHITE);
             upperCase.setTextColor(Color.WHITE);
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             copyBtn.setBackground(getDrawable(R.drawable.dark_btn_background));
             copyBtn.setTextColor(Color.WHITE);
         } else {
+            darkMode.setChecked(false);
             constraintLayout.setBackgroundColor(Color.WHITE);
             passText.setTextColor(Color.BLACK);
             upperCase.setTextColor(Color.BLACK);
@@ -93,11 +93,10 @@ public class MainActivity extends AppCompatActivity {
             copyBtn.setTextColor(Color.BLACK);
         }
     }
-
+    //Method for generating a password depending on the switches that have been switched
     public void generatePass(View view){
         Random r = new Random();
         String newWord = "";
-        boolean contains = false;
         if(upperCase.isChecked() && lowerCase.isChecked() && symbolCase.isChecked() && numberCase.isChecked()) {
             finalString = chars + nums + symbols;
         } else if (upperCase.isChecked() && lowerCase.isChecked() && symbolCase.isChecked()) {
@@ -129,9 +128,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (numberCase.isChecked()){
             finalString = nums;
         }
-
+        //Generating password
         for(int i = 0; i < passLength.getProgress(); i++) {
             char rand = finalString.charAt(r.nextInt(finalString.length()));
+            /*
+                Checking if the previous character generated is the same as the latest one.
+                If yes we generate a new one
+            */
             if (i >= 1 && String.valueOf(rand).equals(newWord.substring(newWord.length() - 1))){
                 rand = finalString.charAt(r.nextInt(finalString.length()));
                 newWord = newWord + rand;
@@ -139,25 +142,24 @@ public class MainActivity extends AppCompatActivity {
                 newWord = newWord + rand;
             }
         }
-
+            //Making sure that the final password contains at least one number
             if(numberCase.isChecked() && !newWord.matches(".*\\d.*")){
-                System.out.println("in if");
                 newWord = newWord.replace(newWord.charAt(r.nextInt(newWord.length())),nums.charAt(r.nextInt(nums.length())));
                 passwordField.setText(newWord);
             } else {
-                System.out.println("in else");
                 passwordField.setText(newWord);
             }
     }
-
+    //Method for copying password to clipboard
     public void copyPassword(View view){
         String passValue = passwordField.getText().toString();
+        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         if (!passValue.isEmpty()){
             clip = ClipData.newPlainText("label",passValue);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this,"Copied to clipboard",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Copied to clipboard",Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this,"Nothing to copy! Generate a password first.",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Nothing to copy! Generate a password first.",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -167,12 +169,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Getting rid of actionbar
         try {
-            this.getSupportActionBar().hide();
+            Objects.requireNonNull(this.getSupportActionBar()).hide();
         } catch (NullPointerException e){
             setContentView(R.layout.activity_main);
         }
-
+        //Variable declaration
         passText = findViewById(R.id.passText);
         passLen = findViewById(R.id.passLength);
         passwordField =  findViewById(R.id.password);
@@ -189,30 +192,23 @@ public class MainActivity extends AppCompatActivity {
         darkModeEnabled = darkMode.isChecked();
         drawable = getApplicationContext().getResources().getDrawable(R.drawable.light_btn_background);
 
-
         sharedPreferences = this.getSharedPreferences("com.example.passgenerator",Context.MODE_PRIVATE);
-
-        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
         passProgress = 12;
         minPass = 8;
         maxPass = 20;
 
-        smh();
+        switchDarkMode();
         darkMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 darkModeEnabled = ((Switch)v).isChecked();
                 sharedPreferences.edit().putBoolean("darkModeEnabled",darkModeEnabled).apply();
-                System.out.println(sharedPreferences.getBoolean("darkModeEnabled",false));
-                smh();
+                switchDarkMode();
             }
         });
-        passStrength.setText(passProgress + " Characters");
+        passLen.setText("Password Length "+passProgress + " Characters");
 
-        if (getDarkMode){
-            darkMode.setChecked(true);
-        }
 
         passLength.setMin(minPass);
         passLength.setMax(maxPass);
@@ -221,48 +217,36 @@ public class MainActivity extends AppCompatActivity {
         passLength.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                passStrength.setText(progress + " Characters");
+                passLen.setText("Password Length " + progress + " Characters");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 SpannableString spannable;
-                SpannableStringBuilder stringBuilder;
                 String strLength;
-                String strProgress = String.valueOf(seekBar.getProgress()) + " Characters" + "\n";
                 ForegroundColorSpan fcsRed = new ForegroundColorSpan(Color.RED);
                 ForegroundColorSpan fcsYellow = new ForegroundColorSpan(Color.YELLOW);
                 ForegroundColorSpan fcsGreen = new ForegroundColorSpan(Color.GREEN);
-
+                //Setting text color depending on the size of the password
                 if(passLength.getProgress() < passProgress){
                     strLength = "Weak password";
                     spannable = new SpannableString(strLength);
-                    stringBuilder = new SpannableStringBuilder(strProgress);
                     spannable.setSpan(fcsRed, 0,strLength.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    stringBuilder.append(spannable);
                 } else if (passLength.getProgress() >= passProgress && passLength.getProgress() <= 16 ){
                     strLength = "Medium password";
                     spannable = new SpannableString(strLength);
-                    stringBuilder = new SpannableStringBuilder(strProgress);
                     spannable.setSpan(fcsYellow, 0,strLength.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    stringBuilder.append(spannable);
                 } else {
                     strLength = "Strong password";
                     spannable = new SpannableString(strLength);
-                    stringBuilder = new SpannableStringBuilder(strProgress);
                     spannable.setSpan(fcsGreen, 0,strLength.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    stringBuilder.append(spannable);
                 }
-                passStrength.setText(stringBuilder);
-
+                passStrength.setText(spannable);
             }
         });
-
-
     }
 }

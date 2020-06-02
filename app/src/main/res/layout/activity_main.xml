@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:text="Dark Mode"
+        android:text="@string/darkMode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:text="Password Generator"
+        android:text="@string/passText"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -47,8 +47,8 @@
             android:checked="true"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:text="Upper Case"
-            android:textSize="15sp" />
+            android:text="@string/upperCase"
+            android:textSize="16sp" />
 
         <Switch
             android:id="@+id/lowerCaseSwitch"
@@ -56,11 +56,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_marginTop="10dp"
+            android:checked="true"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:checked="true"
-            android:text="Lower Case"
-            android:textSize="15sp" />
+            android:text="@string/lowerCase"
+            android:textSize="16sp" />
 
         <Switch
             android:id="@+id/symbolSwitch"
@@ -68,11 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_marginTop="10dp"
+            android:checked="true"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:checked="true"
-            android:text="Include Symbols"
-            android:textSize="15sp" />
+            android:text="@string/symbolCase"
+            android:textSize="16sp" />
 
         <Switch
             android:id="@+id/numSwitch"
@@ -80,11 +80,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_marginTop="10dp"
+            android:checked="true"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:checked="true"
-            android:text="Include Numbers"
-            android:textSize="15sp" />
+            android:text="@string/numCase"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <TextView
@@ -95,6 +95,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="150dp"
         android:text="Password Length"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,12 +106,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passLength" />
+        app:layout_constraintTop_toBottomOf="@+id/passLength"
+        android:progressDrawable="@drawable/seek_bar"
+        android:thumb="@drawable/seek_thumb"/>
 
     <TextView
         android:id="@+id/passStrength"
@@ -120,7 +123,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="100dp"
         android:textAlignment="center"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBar" />

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PassGenerator</string>
+    <string name="darkMode">Dark Mode</string>
+    <string name="passText">Password Generator</string>
+    <string name="upperCase">Upper Case</string>
+    <string name="lowerCase">Lower Case</string>
+    <string name="symbolCase">Include Symbols</string>
+    <string name="numCase">Include Numbers</string>
 </resources>
