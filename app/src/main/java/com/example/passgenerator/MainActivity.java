@@ -2,7 +2,6 @@ package com.example.passgenerator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -12,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
@@ -21,12 +19,19 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Objects;
 import java.util.Random;
 
+/*
+* THIS APP GENERATES A RANDOM PASSWORD USING BOTH CHARACTERS, NUMBERS AND SYMBOLS.
+* IT SUPPORTS LIGHT AND DARK MODE AND CAN SAVE THE GENERATED PASSWORD TO THE CLIPBOARD.
+*/
+
 public class MainActivity extends AppCompatActivity {
-    //Variable declaration
+
+    /*
+    * Variable declaration
+    */
     String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     String nums = "0123456789";
     String symbols = "!@#$^&*=+()|?/\\;[]{}-.,";
@@ -56,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
     int maxPass;
 
     @SuppressLint("WrongConstant")
-    //Method for switching from light to dark mode
+    /*
+    * Method for switching from light to dark mode
+    */
     public void switchDarkMode(){
         getDarkMode = sharedPreferences.getBoolean("darkModeEnabled",true);
         if(getDarkMode){
@@ -93,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
             copyBtn.setTextColor(Color.BLACK);
         }
     }
-    //Method for generating a password depending on the switches that have been switched
+
+    /*
+    * Method for generating a password depending on the switches that have been switched
+    */
     public void generatePass(View view){
         Random r = new Random();
         String newWord = "";
@@ -127,13 +137,18 @@ public class MainActivity extends AppCompatActivity {
             finalString = symbols;
         } else if (numberCase.isChecked()){
             finalString = nums;
+        } else {
+            Toast.makeText(this, "Please select a filter to generate a password.", Toast.LENGTH_SHORT).show();
+            return;
         }
-        //Generating password
+        /*
+         * Generating password
+         */
         for(int i = 0; i < passLength.getProgress(); i++) {
             char rand = finalString.charAt(r.nextInt(finalString.length()));
             /*
-                Checking if the previous character generated is the same as the latest one.
-                If yes we generate a new one
+            * Checking if the previous character generated is the same as the latest one.
+            * If yes we generate a new one
             */
             if (i >= 1 && String.valueOf(rand).equals(newWord.substring(newWord.length() - 1))){
                 rand = finalString.charAt(r.nextInt(finalString.length()));
@@ -142,15 +157,20 @@ public class MainActivity extends AppCompatActivity {
                 newWord = newWord + rand;
             }
         }
-            //Making sure that the final password contains at least one number
-            if(numberCase.isChecked() && !newWord.matches(".*\\d.*")){
-                newWord = newWord.replace(newWord.charAt(r.nextInt(newWord.length())),nums.charAt(r.nextInt(nums.length())));
-                passwordField.setText(newWord);
-            } else {
-                passwordField.setText(newWord);
-            }
+
+        /*
+        * Making sure that the final password contains at least one number
+        */
+        if(numberCase.isChecked() && !newWord.matches(".*\\d.*")){
+            newWord = newWord.replace(newWord.charAt(r.nextInt(newWord.length())),nums.charAt(r.nextInt(nums.length())));
+            passwordField.setText(newWord);
+        } else {
+            passwordField.setText(newWord);
+        }
     }
-    //Method for copying password to clipboard
+    /*
+    * Method for copying password to clipboard
+    */
     public void copyPassword(View view){
         String passValue = passwordField.getText().toString();
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -163,19 +183,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Getting rid of actionbar
+        /*
+        * Getting rid of actionbar
+        */
         try {
             Objects.requireNonNull(this.getSupportActionBar()).hide();
         } catch (NullPointerException e){
             setContentView(R.layout.activity_main);
         }
-        //Variable declaration
+
+        /*
+        * Variable declaration
+        */
         passText = findViewById(R.id.passText);
         passLen = findViewById(R.id.passLength);
         passwordField =  findViewById(R.id.password);
@@ -199,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         maxPass = 20;
 
         switchDarkMode();
+
         darkMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
                 switchDarkMode();
             }
         });
-        passLen.setText("Password Length "+passProgress + " Characters");
 
+        passLen.setText("Password Length " + passProgress + " Characters");
 
         passLength.setMin(minPass);
         passLength.setMax(maxPass);
