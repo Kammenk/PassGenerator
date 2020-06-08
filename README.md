@@ -1,3 +1,3 @@
 # PassGenerator
-THIS APP GENERATES A RANDOM PASSWORD USING BOTH CHARACTERS, NUMBERS AND SYMBOLS.
-IT SUPPORTS LIGHT AND DARK MODE AND CAN SAVE THE GENERATED PASSWORD TO THE CLIPBOARD.
+This app generates a random password using both characters, numbers and symbols.
+It supports light and dark mode and can save the generated password to the clipboard
